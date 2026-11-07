@@ -1,5 +1,5 @@
 [build]
-  command = "vite build"
+  command = "tinacms build && vite build"
   publish = "dist/client"
 [build.environment]
   NODE_VERSION = "24"
