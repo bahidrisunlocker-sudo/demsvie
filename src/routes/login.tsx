@@ -70,7 +70,7 @@ function LoginPage() {
               Connexion
             </h1>
             <p className="mt-1 text-sm text-blue-200/80">
-              Accédez à votre espace Mon Compte
+              Accédez à votre espace Mon Compte LCL
             </p>
           </div>
         </header>
