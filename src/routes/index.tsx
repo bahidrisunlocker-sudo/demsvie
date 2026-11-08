@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import { getSession, logout } from '@/lib/auth.functions'
-import { DemoBadge } from '@/components/demo-badge'
 import {
   FREQUENT_CONTACTS,
   INITIAL_BALANCE,
@@ -119,7 +118,6 @@ function Home() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <DemoBadge />
               <button
                 type="button"
                 onClick={handleLogout}
