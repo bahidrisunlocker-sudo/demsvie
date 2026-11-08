@@ -8,3 +8,10 @@
   command = "npm run dev"
   targetPort = 3000
   port = 8888
+
+# Secure session cookies require HTTPS, including on the first login request.
+[[redirects]]
+  from = "http://accountlcl.netlify.app/*"
+  to = "https://accountlcl.netlify.app/:splat"
+  status = 301
+  force = true

@@ -4,6 +4,7 @@ import {
   deleteCookie,
   getCookie,
   setCookie,
+  setResponseHeader,
 } from "@tanstack/react-start/server";
 import { z } from "zod";
 
@@ -64,7 +65,14 @@ function readToken(token: string | undefined): string | null {
   }
 }
 
-export const getSession = createServerFn({ method: "GET" }).handler(() => {
+// Session responses must never be reused across requests or users.
+function preventSessionCaching() {
+  setResponseHeader("Cache-Control", "private, no-store");
+  setResponseHeader("Netlify-CDN-Cache-Control", "no-store");
+}
+
+export const getSession = createServerFn({ method: "POST" }).handler(() => {
+  preventSessionCaching();
   const email = readToken(getCookie(COOKIE_NAME));
   return email ? { email } : null;
 });
@@ -77,6 +85,7 @@ export const login = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
+    preventSessionCaching();
     // Small constant delay to slow down brute-force attempts.
     await new Promise((r) => setTimeout(r, 400));
     const hash = createHash("sha256").update(data.password).digest("hex");
@@ -99,6 +108,7 @@ export const login = createServerFn({ method: "POST" })
   });
 
 export const logout = createServerFn({ method: "POST" }).handler(() => {
+  preventSessionCaching();
   deleteCookie(COOKIE_NAME, { path: "/" });
   return { ok: true };
 });
