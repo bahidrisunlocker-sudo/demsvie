@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { Eye, EyeOff, Landmark, Loader2, Lock, Mail } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
 
 import { getSession, login } from '@/lib/auth.functions'
-import { DemoBadge } from '@/components/demo-badge'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async () => {
@@ -52,16 +51,15 @@ function LoginPage() {
             aria-hidden
             className="pointer-events-none absolute -top-24 -right-20 size-64 rounded-full bg-blue-500/25 blur-3xl"
           />
-          <div className="relative flex justify-end">
-            <DemoBadge />
-          </div>
           <div className="relative mt-6 flex flex-col items-center text-center">
-            <div className="flex size-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-              <Landmark className="size-8" />
-            </div>
-            <h1 className="mt-5 text-2xl font-bold tracking-tight">
-              Connexion
-            </h1>
+            <img
+              src="/images/logo-lcl.png"
+              alt="LCL — Banque et assurance"
+              width={250}
+              height={202}
+              className="h-auto w-32 rounded-xl"
+            />
+            <h1 className="mt-5 text-2xl font-bold tracking-tight">Connexion</h1>
             <p className="mt-1 text-sm text-blue-200/80">
               Accédez à votre espace Mon Compte
             </p>
@@ -145,7 +143,7 @@ function LoginPage() {
 
         <p className="mt-6 flex items-center justify-center gap-1.5 px-6 text-xs text-slate-500">
           <Lock className="size-3.5" />
-          Connexion sécurisée · Application de démonstration, compte fictif
+          Connexion sécurisée
         </p>
       </main>
     </div>
