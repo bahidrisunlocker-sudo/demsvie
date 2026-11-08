@@ -114,7 +114,7 @@ function Home() {
               </div>
               <div>
                 <p className="text-xs text-blue-200/80">Bonjour,</p>
-                <p className="text-sm font-medium">Jean Dupont</p>
+                <p className="text-sm font-medium">florence catherine</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
