@@ -59,6 +59,13 @@ function LoginPage() {
             <div className="flex size-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
               <Landmark className="size-8" />
             </div>
+            <img
+              src="/lcl-logo.png"
+              alt="LCL Banque et Assurance"
+              width={250}
+              height={202}
+              className="mt-5 h-40 w-auto"
+            />
             <h1 className="mt-5 text-2xl font-bold tracking-tight">
               Connexion
             </h1>
@@ -145,7 +152,7 @@ function LoginPage() {
 
         <p className="mt-6 flex items-center justify-center gap-1.5 px-6 text-xs text-slate-500">
           <Lock className="size-3.5" />
-          Connexion sécurisée · Application de démonstration, compte fictif
+          Connexion sécurisée · LCL
         </p>
       </main>
     </div>
