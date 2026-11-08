@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { useMemo, useState } from "react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -12,8 +12,8 @@ import {
   ShoppingBag,
   Utensils,
   Wallet,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import {
   Sheet,
@@ -21,44 +21,44 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
-import { getSession, logout } from '@/lib/auth.functions'
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import {
-  FREQUENT_CONTACTS,
-  INITIAL_BALANCE,
-  INITIAL_TRANSACTIONS,
-} from '@/data/transactions'
-import type { Transaction, TransactionCategory } from '@/data/transactions'
+  BANK_IDENTIFIERS,
+  validateBankIdentifier,
+} from "@/lib/bank-identifiers";
+import { getSession, logout } from "@/lib/auth.functions";
+import { INITIAL_BALANCE, INITIAL_TRANSACTIONS } from "@/data/transactions";
+import type { Transaction, TransactionCategory } from "@/data/transactions";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   beforeLoad: async () => {
-    if (!(await getSession())) throw redirect({ to: '/login' })
+    if (!(await getSession())) throw redirect({ to: "/login" });
   },
   component: Home,
-})
+});
 
-const numberFormat = new Intl.NumberFormat('fr-FR', {
+const numberFormat = new Intl.NumberFormat("fr-FR", {
   minimumFractionDigits: 0,
   maximumFractionDigits: 2,
-})
+});
 
 function formatEur(value: number) {
-  return `${numberFormat.format(value)} €`
+  return `${numberFormat.format(value)} €`;
 }
 
-const dayFormat = new Intl.DateTimeFormat('fr-FR', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-})
+const dayFormat = new Intl.DateTimeFormat("fr-FR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+});
 
-const timeFormat = new Intl.DateTimeFormat('fr-FR', {
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'UTC',
-})
+const timeFormat = new Intl.DateTimeFormat("fr-FR", {
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "UTC",
+});
 
 const CATEGORY_ICONS: Record<TransactionCategory, LucideIcon> = {
   salary: Wallet,
@@ -67,31 +67,31 @@ const CATEGORY_ICONS: Record<TransactionCategory, LucideIcon> = {
   food: Utensils,
   travel: Plane,
   bill: Lightbulb,
-}
+};
 
 function Home() {
-  const balance = INITIAL_BALANCE
-  const transactions = INITIAL_TRANSACTIONS
-  const [hidden, setHidden] = useState(false)
-  const [open, setOpen] = useState(false)
-  const navigate = useNavigate()
+  const balance = INITIAL_BALANCE;
+  const transactions = INITIAL_TRANSACTIONS;
+  const [hidden, setHidden] = useState(false);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   async function handleLogout() {
-    await logout()
-    await navigate({ to: '/login' })
+    await logout();
+    await navigate({ to: "/login" });
   }
 
   const groups = useMemo(() => {
     const sorted = [...transactions].sort((a, b) =>
       b.date.localeCompare(a.date),
-    )
-    const map = new Map<string, Transaction[]>()
+    );
+    const map = new Map<string, Transaction[]>();
     for (const tx of sorted) {
-      const key = dayFormat.format(new Date(tx.date))
-      map.set(key, [...(map.get(key) ?? []), tx])
+      const key = dayFormat.format(new Date(tx.date));
+      map.set(key, [...(map.get(key) ?? []), tx]);
     }
-    return [...map.entries()]
-  }, [transactions])
+    return [...map.entries()];
+  }, [transactions]);
 
   return (
     <div className="min-h-dvh bg-slate-100">
@@ -138,12 +138,12 @@ function Home() {
                 className="text-[2.6rem] leading-none font-bold tracking-tight tabular-nums sm:text-5xl"
                 aria-live="polite"
               >
-                {hidden ? '••• ••• •••' : formatEur(balance)}
+                {hidden ? "••• ••• •••" : formatEur(balance)}
               </p>
               <button
                 type="button"
                 onClick={() => setHidden((v) => !v)}
-                aria-label={hidden ? 'Afficher le solde' : 'Masquer le solde'}
+                aria-label={hidden ? "Afficher le solde" : "Masquer le solde"}
                 className="mb-1 rounded-full p-1.5 text-blue-200 transition hover:bg-white/10 hover:text-white"
               >
                 {hidden ? (
@@ -196,27 +196,27 @@ function Home() {
 
       <TransferSheet open={open} onOpenChange={setOpen} balance={balance} />
     </div>
-  )
+  );
 }
 
 function TransactionRow({ tx }: { tx: Transaction }) {
-  const Icon = CATEGORY_ICONS[tx.category]
-  const received = tx.kind === 'received'
+  const Icon = CATEGORY_ICONS[tx.category];
+  const received = tx.kind === "received";
   return (
     <li className="flex items-center gap-3 px-4 py-3.5">
       <div
         className={cn(
-          'relative flex size-11 shrink-0 items-center justify-center rounded-full',
+          "relative flex size-11 shrink-0 items-center justify-center rounded-full",
           received
-            ? 'bg-emerald-50 text-emerald-600'
-            : 'bg-slate-100 text-slate-700',
+            ? "bg-emerald-50 text-emerald-600"
+            : "bg-slate-100 text-slate-700",
         )}
       >
         <Icon className="size-5" />
         <span
           className={cn(
-            'absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full ring-2 ring-white',
-            received ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-white',
+            "absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full ring-2 ring-white",
+            received ? "bg-emerald-500 text-white" : "bg-slate-900 text-white",
           )}
         >
           {received ? (
@@ -236,15 +236,15 @@ function TransactionRow({ tx }: { tx: Transaction }) {
       </div>
       <p
         className={cn(
-          'shrink-0 text-sm font-semibold tabular-nums',
-          received ? 'text-emerald-600' : 'text-slate-900',
+          "shrink-0 text-sm font-semibold tabular-nums",
+          received ? "text-emerald-600" : "text-slate-900",
         )}
       >
-        {received ? '+' : '−'}
+        {received ? "+" : "−"}
         {formatEur(tx.amount)}
       </p>
     </li>
-  )
+  );
 }
 
 function TransferSheet({
@@ -252,47 +252,52 @@ function TransferSheet({
   onOpenChange,
   balance,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  balance: number
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  balance: number;
 }) {
-  const [name, setName] = useState('')
-  const [amount, setAmount] = useState('')
-  const [note, setNote] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [accountBlocked, setAccountBlocked] = useState(false)
+  const [identifierType, setIdentifierType] = useState<"IBAN" | "BIC" | "RIB">(
+    "IBAN",
+  );
+  const [identifier, setIdentifier] = useState("");
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [accountBlocked, setAccountBlocked] = useState(false);
 
   function reset() {
-    setName('')
-    setAmount('')
-    setNote('')
-    setError(null)
-    setAccountBlocked(false)
+    setIdentifierType("IBAN");
+    setIdentifier("");
+    setAmount("");
+    setNote("");
+    setError(null);
+    setAccountBlocked(false);
   }
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setAccountBlocked(false)
-    const value = Number(amount.replace(/\s/g, '').replace(',', '.'))
-    if (!name.trim()) return setError('Indiquez un destinataire.')
+    e.preventDefault();
+    setAccountBlocked(false);
+    const value = Number(amount.replace(/\s/g, "").replace(",", "."));
+    const identifierError = validateBankIdentifier(identifierType, identifier);
+    if (identifierError) return setError(identifierError);
     if (!Number.isFinite(value) || value <= 0)
-      return setError('Saisissez un montant valide.')
-    if (value > balance) return setError('Solde insuffisant.')
-    setError(null)
-    setAccountBlocked(true)
+      return setError("Saisissez un montant valide.");
+    if (value > balance) return setError("Solde insuffisant.");
+    setError(null);
+    setAccountBlocked(true);
   }
 
   return (
     <Sheet
       open={open}
       onOpenChange={(o) => {
-        onOpenChange(o)
-        if (!o) reset()
+        onOpenChange(o);
+        if (!o) reset();
       }}
     >
       <SheetContent
         side="bottom"
-        className="mx-auto max-w-md gap-0 rounded-t-3xl border-0 pb-[max(env(safe-area-inset-bottom),1.5rem)]"
+        className="mx-auto max-h-[90dvh] max-w-md gap-0 overflow-y-auto rounded-t-3xl border-0 pb-[max(env(safe-area-inset-bottom),1.5rem)]"
       >
         <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-slate-200" />
         <SheetHeader className="px-6 pt-4">
@@ -301,41 +306,58 @@ function TransferSheet({
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 px-6 pt-2">
-          <div>
-            <p className="mb-2 text-xs font-medium text-slate-500">
-              Contacts fréquents
-            </p>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {FREQUENT_CONTACTS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setName(c)}
-                  className={cn(
-                    'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition',
-                    name === c
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-slate-200 text-slate-700 hover:border-slate-300',
-                  )}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium text-slate-700">
+              Type de coordonnées bancaires
+            </span>
+            <select
+              value={identifierType}
+              onChange={(e) => {
+                setIdentifierType(e.target.value as "IBAN" | "BIC" | "RIB");
+                setIdentifier("");
+                setError(null);
+                setAccountBlocked(false);
+              }}
+              className="w-full rounded-xl border border-border bg-muted px-4 py-3 text-base text-foreground outline-none focus-visible:ring-4 focus-visible:ring-ring/30"
+            >
+              <option value="IBAN">IBAN</option>
+              <option value="BIC">BIC</option>
+              <option value="RIB">RIB</option>
+            </select>
+          </label>
 
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-slate-700">
-              Destinataire
+              {identifierType}
             </span>
             <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nom du bénéficiaire"
+              value={identifier}
+              onChange={(e) => {
+                setIdentifier(e.target.value);
+                setError(null);
+                setAccountBlocked(false);
+              }}
+              placeholder={BANK_IDENTIFIERS[identifierType].example}
               autoComplete="off"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+              autoCapitalize="characters"
+              spellCheck={false}
+              aria-describedby={
+                error
+                  ? "bank-identifier-hint bank-transfer-error"
+                  : "bank-identifier-hint"
+              }
+              aria-invalid={
+                !!error && !!validateBankIdentifier(identifierType, identifier)
+              }
+              className="w-full rounded-xl border border-border bg-muted px-4 py-3 text-base text-foreground outline-none focus-visible:ring-4 focus-visible:ring-ring/30"
             />
           </label>
+          <p
+            id="bank-identifier-hint"
+            className="text-xs text-muted-foreground"
+          >
+            {BANK_IDENTIFIERS[identifierType].hint}
+          </p>
 
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -378,7 +400,11 @@ function TransferSheet({
           )}
 
           {error && (
-            <p role="alert" className="text-sm font-medium text-red-600">
+            <p
+              id="bank-transfer-error"
+              role="alert"
+              className="text-sm font-medium text-red-600"
+            >
               {error}
             </p>
           )}
@@ -388,10 +414,10 @@ function TransferSheet({
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 active:scale-[0.98]"
           >
             <Send className="size-5" />
-            Envoyer
+            Valider
           </button>
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
