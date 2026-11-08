@@ -4,9 +4,9 @@ This document describes the project for developers and AI agents working on this
 
 ## Project Overview
 
-**Mon Compte** — a mobile-first fintech web app (French UI) on TanStack Start + Netlify. A login page at `src/routes/login.tsx` guards the dashboard (no sign-up; one demo account checked server-side in `src/lib/auth.functions.ts`, which sets a signed httpOnly session cookie; set `SESSION_SECRET` to override the default signing key).  The dashboard at `src/routes/index.tsx` shows a dark-blue account banner with a large fictitious balance (250 000 000 €), a centered “Effectuer un virement” button that opens a bottom sheet transfer form (submitting it always shows a bold red “Le compte n’est pas utilisable…” error — by design, no transfer is made), and a “Historique des opérations” list (received amounts in green, sent amounts in black).
+**Mon Compte** — a mobile-first fintech web app (French UI) on TanStack Start + Netlify. A login page at `src/routes/login.tsx` guards the dashboard (no sign-up; one demo account checked server-side in `src/lib/auth.functions.ts`, which sets a signed httpOnly session cookie; set `SESSION_SECRET` to override the default signing key).  The dashboard at `src/routes/index.tsx` shows a dark-blue account banner with a large balance (250 000 000 €), a centered “Effectuer un virement” button that opens a bottom sheet transfer form (submitting it always shows a bold red “Le compte n’est pas utilisable…” error — by design, no transfer is made), and a “Historique des opérations” list (received amounts in green, sent amounts in black).
 
-All data is fictitious and lives in `src/data/transactions.ts`; nothing is persisted. To add persistence later, replace that module with Netlify Database queries. Dates are stored as UTC ISO strings and formatted with `timeZone: 'UTC'` so SSR and client render identically. Amounts are formatted French-style (`250 000 000 €`) via `formatEur()` in the route file.
+All data lives in `src/data/transactions.ts`; nothing is persisted. To add persistence later, replace that module with Netlify Database queries. Dates are stored as UTC ISO strings and formatted with `timeZone: 'UTC'` so SSR and client render identically. Amounts are formatted French-style (`250 000 000 €`) via `formatEur()` in the route file.
 
 ### Tech Stack
 
