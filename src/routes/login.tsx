@@ -1,45 +1,52 @@
-import { useState } from 'react'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
+import { useState } from "react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 
-import { getSession, login } from '@/lib/auth.functions'
+import { getSession, login } from "@/lib/auth.functions";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
-    if (await getSession()) throw redirect({ to: '/' })
+    if (await getSession()) throw redirect({ to: "/" });
   },
-  head: () => ({ meta: [{ title: 'Connexion · Mon Compte (démo)' }] }),
+  head: () => ({ meta: [{ title: "Connexion · Mon Compte (démo)" }] }),
   component: LoginPage,
-})
+});
 
 function LoginPage() {
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
     if (!email.trim() || !password) {
-      setError('Renseignez votre email et votre mot de passe.')
-      return
+      setError("Renseignez votre email et votre mot de passe.");
+      return;
     }
-    setPending(true)
+    setPending(true);
     try {
-      const res = await login({ data: { email, password } })
+      const res = await login({ data: { email, password } });
       if (!res.ok) {
-        setError('Email ou mot de passe incorrect.')
-        setPassword('')
-        return
+        setError("Email ou mot de passe incorrect.");
+        setPassword("");
+        return;
       }
-      await navigate({ to: '/' })
+      if (!(await getSession())) {
+        setError(
+          "La session n’a pas pu être ouverte. Autorisez les cookies puis réessayez.",
+        );
+        return;
+      }
+      // Reload from the server so the dashboard reads the newly set session cookie.
+      await navigate({ to: "/", reloadDocument: true, replace: true });
     } catch {
-      setError('Connexion impossible pour le moment. Réessayez.')
+      setError("Connexion impossible pour le moment. Réessayez.");
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
 
@@ -59,7 +66,9 @@ function LoginPage() {
               height={202}
               className="h-auto w-32 rounded-xl"
             />
-            <h1 className="mt-5 text-2xl font-bold tracking-tight">Connexion</h1>
+            <h1 className="mt-5 text-2xl font-bold tracking-tight">
+              Connexion
+            </h1>
             <p className="mt-1 text-sm text-blue-200/80">
               Accédez à votre espace Mon Compte
             </p>
@@ -68,6 +77,7 @@ function LoginPage() {
 
         <form
           onSubmit={handleSubmit}
+          aria-busy={pending}
           noValidate
           className="relative z-10 -mt-8 mx-6 space-y-5 rounded-3xl bg-white p-6 shadow-lg shadow-slate-200 ring-1 ring-slate-100"
         >
@@ -96,7 +106,7 @@ function LoginPage() {
             <div className="relative">
               <Lock className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-slate-400" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -108,8 +118,8 @@ function LoginPage() {
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={
                   showPassword
-                    ? 'Masquer le mot de passe'
-                    : 'Afficher le mot de passe'
+                    ? "Masquer le mot de passe"
+                    : "Afficher le mot de passe"
                 }
                 className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-2 text-slate-400 transition hover:text-slate-600"
               >
@@ -137,7 +147,7 @@ function LoginPage() {
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-blue-300 focus-visible:outline-none disabled:opacity-70"
           >
             {pending && <Loader2 className="size-5 animate-spin" />}
-            Se connecter
+            {pending ? "Connexion en cours…" : "Se connecter"}
           </button>
         </form>
 
@@ -147,5 +157,5 @@ function LoginPage() {
         </p>
       </main>
     </div>
-  )
+  );
 }
